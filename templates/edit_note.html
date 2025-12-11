@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card bg-secondary text-light p-4 mb-4 border-warning shadow">
+            <h2 class="card-title text-warning mb-4">Editar Nota: "{{ note.title }}"</h2>
+            <form method="POST" action="{{ url_for('edit_note', note_id=note.id) }}">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Título</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ note.title }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="content" class="form-label">Contenido</label>
+                    <textarea class="form-control" id="content" name="content" rows="8" required>{{ note.content }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-warning btn-lg">Guardar Cambios</button>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-light ms-2">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  web:
+    # 1. Construye la imagen usando el Dockerfile en el directorio actual
+    build: .
+    
+    # 2. Mapea el puerto del contenedor (8000) a tu máquina local (5000)
+    ports:
+      - "5000:8000"
+      
+    # 3. Variables de entorno para la aplicación Flask
+    environment:
+      # URI de conexión a PostgreSQL (usa 'db' como nombre de host)
+      DATABASE_URL: postgresql://postgres:mypassword@db:5432/notedb
+      SECRET_KEY: una_clave_secreta_para_produccion
+      
+    # 4. Comando de inicio (wait-for-it.sh + inicialización de DB + Gunicorn)
+    # Ejecuta wait-for-it.sh para esperar 30 segundos a que la DB esté lista.
+    # Luego, ejecuta init_db.py para crear las tablas y finalmente inicia Gunicorn.
+    command: ["./wait-for-it.sh", "db:5432", "--timeout=30", "--", "/bin/sh", "-c", "python init_db.py && gunicorn --bind 0.0.0.0:8000 app:app"]
+      
+    # 5. Dependencia: el servicio 'web' solo intentará arrancar después de que 'db' haya iniciado
+    depends_on:
+      - db
+    
+    # 6. Reinicio automático en caso de fallos
+    restart: always
+
+  db:
+    # 1. Imagen oficial de PostgreSQL
+    image: postgres:15-alpine
+    
+    # 2. Variables de entorno que usa PostgreSQL para crear la base de datos y el usuario
+    environment:
+      POSTGRES_DB: notedb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypassword
+      
+    # 3. Almacenamiento persistente para que los datos no se pierdan
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      
+    # 4. Reinicio automático en caso de fallos
+    restart: always
+
+# Definición del volumen para el almacenamiento persistente de la DB
+volumes:
+  postgres_data:

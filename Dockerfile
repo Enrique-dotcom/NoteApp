@@ -23,6 +23,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # 6. Copia el resto del código de la aplicación (app.py, config.py, templates, static)
 COPY . .
+
+# 6a. Convierte los finales de línea de CRLF a LF (importante en Windows)
+RUN apt-get update && apt-get install -y dos2unix && rm -rf /var/lib/apt/lists/*
+RUN dos2unix wait-for-it.sh
 RUN chmod +x wait-for-it.sh
 
 # 7. Define el puerto que la aplicación Gunicorn usará

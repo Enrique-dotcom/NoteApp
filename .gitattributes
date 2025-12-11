@@ -1,0 +1,12 @@
+# Asegurar que los scripts bash siempre tengan finales de línea Unix (LF)
+*.sh text eol=lf
+
+# Archivos de Python
+*.py text eol=lf
+
+# Dockerfile
+Dockerfile text eol=lf
+docker-compose.yml text eol=lf
+
+# Por defecto, todos los demás archivos
+* text=auto
